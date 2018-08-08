@@ -4,7 +4,7 @@ let store = { neighborhoods: [], meals: [], customers: [], deliveries: [] };
 let neighborhoodId = 0
 let customerId = 0
 let mealId = 0
-let deliveryId = 0 
+let deliveryId = 0
 
 
 class Neighborhood {
@@ -25,15 +25,18 @@ class Neighborhood {
     })
   }
   meals() {
-    return store.meals.uniq(meal => {
-      return meal.neighborhoodId === this.id
+    const allMeals = this.deliveries().map(delivery => {
+      return delivery.meal()
+    })
+    return allMeals.filter(function (value, index, self) {
+      return self.indexOf(value) === index
     })
   }
 }
 
 class Customer {
   constructor(name, neighborhoodId) {
-    this.name = name 
+    this.name = name
     this.neighborhoodId = neighborhoodId
     this.id = ++customerId
     store.customers.push(this)
@@ -44,22 +47,20 @@ class Customer {
     })
   }
   meals() {
-    return store.deliveries().map(delivery => {
-      return store.meals.find(meal => meal.id === delivery.mealId)
+    return this.deliveries().map(delivery => {
+      return delivery.meal()
     })
   }
   totalSpent(){
-    let total = 0
-    let prices = this.meals().map(meal => meal.price);
-    const addPrices = 
+    return this.meals().reduce( (total, meal) => total += meal.price, 0)
   }
 }
 
 class Meal {
   constructor(title, price) {
     this.title = title
-    this.price = price 
-    this.id = ++mealId 
+    this.price = price
+    this.id = ++mealId
     store.meals.push(this)
   }
   deliveries() {
@@ -68,8 +69,8 @@ class Meal {
     })
   }
   customers() {
-    return store.deliveries().map(delivery => {
-      return store.customers.find(customer => customer.id === delivery.customerId)
+    return this.deliveries().map(delivery => {
+      return delivery.customer()
     })
   }
   static byPrice() {
