@@ -91,9 +91,13 @@ class Delivery {
     return store.meals.find(meal => meal.id === this.mealId)
   }
   customer() {
-    return store.customers.find(customer.id === this.customerId)
+    return store.customers.find(customer => {
+      return customer.id === this.customerId
+    })
   }
   neighborhood() {
-    return store.neighborhoods.find(neighborhood.id === this.neighborhoodId)
+    return store.neighborhoods.find(neighborhood => {
+      return neighborhood.id === this.neighborhoodId
+    })
   }
 }
