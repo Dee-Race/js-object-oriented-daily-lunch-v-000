@@ -1,11 +1,10 @@
 // global datastore
 let store = { neighborhoods: [], meals: [], customers: [], deliveries: [] };
 
-let neighborhoodId = 0 
+let neighborhoodId = 0
 let customerId = 0
 let mealId = 0
 let deliveryId = 0 
-
 
 
 class Neighborhood {
@@ -29,5 +28,71 @@ class Neighborhood {
     return store.meals.uniq(meal => {
       return meal.neighborhoodId === this.id
     })
+  }
+}
+
+class Customer {
+  constructor(name, neighborhoodId) {
+    this.name = name 
+    this.neighborhoodId = neighborhoodId
+    this.id = ++customerId
+    store.customers.push(this)
+  }
+  deliveries() {
+    return store.deliveries.filter(delivery => {
+      return delivery.customerId === this.id
+    })
+  }
+  meals() {
+    return store.deliveries().map(delivery => {
+      return store.meals.find(meal => meal.id === delivery.mealId)
+    })
+  }
+  totalSpent(){
+    let total = 0
+    let prices = this.meals().map(meal => meal.price);
+    const addPrices = 
+  }
+}
+
+class Meal {
+  constructor(title, price) {
+    this.title = title
+    this.price = price 
+    this.id = ++mealId 
+    store.meals.push(this)
+  }
+  deliveries() {
+    return store.deliveries.filter(delivery => {
+      return delivery.mealId === this.id
+    })
+  }
+  customers() {
+    return store.deliveries().map(delivery => {
+      return store.customers.find(customer => customer.id === delivery.customerId)
+    })
+  }
+  static byPrice() {
+    return store.meals.sort((a, b) => a.price < b.price)
+  }
+}
+
+class Delivery {
+  constructor(mealId, neighborhoodId, customerId) {
+    this.mealId = mealId
+    this.neighborhoodId = neighborhoodId
+    this.customerId = customerId
+    this.id = ++deliveryId
+    store.deliveries.push(this)
+  }
+
+  meal() {
+    return store.meals.find(meal => meal.id === this.mealId)
+  }
+  customer() {
+    return store.customers.find(customer.id === this.customerId)
+  }
+  neighborhood() {
+    return store.neighborhoods.find(neighborhood.id === this.neighborhoodId)
   }
 }
